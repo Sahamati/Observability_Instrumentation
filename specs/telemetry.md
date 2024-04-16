@@ -35,7 +35,7 @@ As described in the [Open Network Telemetry Specification](https://github.com/Su
 
 Following is the overall structure of the telemetry event:
 
-```json
+```js
 {
   "resource": { // Required. Entity level context
     "attributes": [
@@ -103,7 +103,7 @@ Detailed example would be described as part of [event types](#event-types)
 
 Following are the optional transport contextual attributes that can be sent for every event:
 
-```json
+```js
 "scope": { // Optional
   "name": String, // Required. An identifier/name for the signals in this scope. For ex: service name or a flow
   "version": String, // Required. A version number of the  telemetry specification
@@ -205,6 +205,8 @@ Following is the event data spec which is the same as defined in the Open Networ
 }
 ```
 
+> Note: There can be additional data to be sent for specific APIs and that will be documented under the specs section for each network node type and for specific APIs
+
 #### Example API Event
 
 Following event (A discover API call for example) contains an example complete event as per open network telemetry specification and all the required sections and attributes described in this document.
@@ -214,18 +216,10 @@ Following event (A discover API call for example) contains an example complete e
   "resourceSpans": [{
     "resource": {
       "attributes": [
-        {
-          "key": "eid", "value": {"stringValue": "API"}
-        },
-        {
-          "key": "producer", "value": {"stringValue": "AA1"}
-        },
-        {
-          "key": "producerType", "value": {"stringValue": "AA"}
-        },
-        {
-          "key": "purposeCode", "value": {"stringValue": "105"}
-        }
+        {"key": "eid", "value": {"stringValue": "API"}},
+        {"key": "producer", "value": {"stringValue": "AA1"}},
+        {"key": "producerType", "value": {"stringValue": "AA"}},
+        {"key": "purposeCode", "value": {"stringValue": "105"}}
       ]
     }, 
     "scopeSpans": [{
@@ -233,15 +227,9 @@ Following event (A discover API call for example) contains an example complete e
         "name": "Discovery", 
         "version": "1.0", 
         "attributes": [
-          {
-            "key": "scope_uuid", "value": {"stringValue": "9db4-325096b39f47"}
-          },
-          {
-            "key": "checksum", "value": {"stringValue": "120EA8A25E5D487BF68B5F7096440019"}
-          },
-          {
-            "key": "count", "value": {"intValue": 1}
-          }
+          {"key": "scope_uuid", "value": {"stringValue": "9db4-325096b39f47"}},
+          {"key": "checksum", "value": {"stringValue": "120EA8A25E5D487BF68B5F7096440019"}},
+          {"key": "count", "value": {"intValue": 1}}
         ]
       },
      "spans": [{ 
@@ -269,7 +257,135 @@ Following event (A discover API call for example) contains an example complete e
 
 ### METRIC
 
+Metric event is used by Network Participants to share business metrics data with the network observability infrastructure.
+
+Following is the event data spec which is defined in the Open Network Telemetry Spec:
+
+```js
+{
+  "metrics": [{ // Required. One or more METRIC events in detail
+    "name": String, // Required. Metric name
+    "unit": String, // Required. Type of metrics stream unit. Common unit types are:
+            // Count: Represents a simple count of events or entities. The unit for count is "1"
+            // Seconds: Represents a duration or time interval. The unit is "s" or "seconds"
+            // Bytes: Represents data size. The unit is typically "B" or "bytes."
+            // Percent: Represents a ratio multiplied by 100. The unit is "%"
+            // Milliseconds: Represents a duration in milliseconds. The unit is "ms" or "milliseconds"
+    "description": String, // Optional. The metric streams description
+    "sum": { // Required. The metric data type
+      "aggregationTemporality": Int, // Required. One of 1 or 2. 1 - delta and 2 is cumulative
+      "isMonotonic": Boolean, // Optional. Defaults to false
+      "dataPoints": [{
+        "asDouble": Double, // Required. The metric value in double
+        "startTimeUnixNano": String, // Required. Start time of the sum time window
+        "endTimeUnixNano": String, // Required. End time of the the sum time window
+        "attributes": [ // Required. Attributes providing additional details about the metric
+          {
+            "key": "metric_uuid", // Required. Unique identifier for this metric record
+            "value": {"stringValue": String}
+          },
+          {
+            "key": "observedTimeUnixNano", // Optional. Event generated time as ISO datetime
+            "value": {"stringValue": String}
+          },
+          {
+            "key": "metric.code", // Required. Code of the metric as defined in the metrics registry
+            "value": {"stringValue": String}
+          },
+          {
+            "key": "metric.category", // Optional. metric category or type.
+            "value": {"stringValue": String}
+          },
+          {
+            "key": "metric.granularity", // Required. Metric granularity - Hour/Week/Day etc
+            "value": {"stringValue": String}
+          },
+          {
+            "key": "metric.frequency", // Required.Metric computation frequency-hr/day/week etc
+            "value": {"stringValue": String}
+          }
+        ]
+      }]
+    }
+  }]
+}
+```
+
+#### Example Metric Event
+
+Following metric event (An AA vs non AA usage metric) contains an example complete event as per open network telemetry specification including all the required sections and attributes described in this document.
+
+```json
+{
+  "resourceMetrics": [{
+    "resource": {
+      "attributes": [
+        {"key": "eid", "value": {"stringValue": "METRIC"}},
+        {"key": "producer", "value": {"stringValue": "AA1"}},
+        {"key": "producerType", "value": {"stringValue": "AA"}},
+        {"key": "purposeCode", "value": {"stringValue": "105"}}
+      ]
+    }, 
+    "scopeSpans": [{
+      "scope": {
+        "name": "Adoption", 
+        "version": "1.0", 
+        "attributes": [
+          {"key": "scope_uuid", "value": {"stringValue": "9db4-325096b39f47"}},
+          {"key": "checksum", "value": {"stringValue": "120EA8A25E5D487BF68B5F7096440019"}},
+          {"key": "count", "value": {"intValue": 1}}
+        ]
+      },
+     "metrics": [{ 
+       "name": "aa_usage_percentage",
+       "unit": "%",
+       "sum": {
+         "aggregationTemporality": 1,
+         "isMonotonic": false,
+         "dataPoints": [{
+           "asDouble": 75,
+           "startTimeUnixNano": "1544712660000000000",
+           "endTimeUnixNano": "1544712661590000000",
+           "attributes": [
+             {"key":"metric_uuid","value": {"stringValue": "43kr3d5f-3cfb-4e6e-b6a2-0ee5d6508923"}},
+             {"key":"observedTimeUnixNano","value": {"stringValue": "1581452772000000321"}},
+             {"key":"metric.code","value": {"stringValue": "aa_usage_percentage"}},
+             {"key":"metric.category","value": {"stringValue": "Adoption"}},
+             {"key":"metric.label","value": {"stringValue": "AA usage percentage"}},
+             {"key":"metric.granularity","value": {"stringValue": "day"}},
+             {"key":"metric.frequency","value": {"stringValue": "day"}}
+           ]
+         }]
+       }
+     }]
+   }]
+ }]
+}
+```
+
 ### AUDIT
+
+Audit events are used by participants to communicate about updates and state changes of entities within the network. The entities include domain objects like consent, as well as the participants themselves. 
+
+Following is the overall structure for Log events:
+
+```js
+{
+  "logRecords": [{ // Required. One or more LOG events in detail
+    "timeUnixNano": String, // Required. Time when the event occurred
+    "observedTimeUnixNano": String, // Optional.Time when the event was observed if different from occurred
+    "severityNumber": String, // Required. Default to 12
+    "traceId": String, // Optional. Correlate to any API event trace id
+    "spanId": String, // Optional. Correlate to any API event span id
+    "body": { // Required. Body of the log record as per OTEL protocol
+        "stringValue": String, // Required. Capture the description here
+    }
+    "attributes": [ // Required. Attributes providing additional details about the log record
+         
+    ]
+  }]
+}
+```
 
 ## Key Attributes of Telemetry Event
 
