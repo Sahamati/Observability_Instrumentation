@@ -205,7 +205,7 @@ Following is the event data spec which is the same as defined in the Open Networ
 }
 ```
 
-> Note: There can be additional data to be sent for specific APIs and that will be documented under the specs section for each network node type and for specific APIs
+> **Note**: There can be additional data to be sent for specific APIs and that will be documented under the specs section for each network node type and for specific APIs
 
 #### Example API Event
 
@@ -259,7 +259,7 @@ Following event (A discover API call for example) contains an example complete e
 
 Metric event is used by Network Participants to share business metrics data with the network observability infrastructure.
 
-Following is the event data spec which is defined in the Open Network Telemetry Spec:
+Following is the metric data spec as per the Open Network Telemetry Spec:
 
 ```js
 {
@@ -367,7 +367,7 @@ Following metric event (An AA vs non AA usage metric) contains an example comple
 
 Audit events are used by participants to communicate about updates and state changes of entities within the network. The entities include domain objects like consent, as well as the participants themselves. 
 
-Following is the overall structure for Log events:
+Following is the overall structure for Log events as per the open telemetry spec:
 
 ```js
 {
@@ -380,19 +380,21 @@ Following is the overall structure for Log events:
     "body": { // Required. Body of the log record as per OTEL protocol
         "stringValue": String, // Required. Capture the description here
     }
-    "attributes": [ // Required. Attributes providing additional details about the log record
-         
-    ]
+    "attributes": [] // Required. Attributes providing additional details about the audit record
   }]
 }
 ```
 
+> **Note**: The attributes to be sent will be defined under the specs section for each network node type and for specific APIs
+
 ## Key Attributes of Telemetry Event
 
-| Attribute  | Description  |  Value |
-|----------|:-------------:|------:|
-| spanId  | An unique id to identify a specific API call  | Use the transaction id being passed in the request/response structures.  |
-| traceId  | An unique id to identify a specific API call  | Use the transaction id being passed in the request/response structures.  |
-| sender.id  | An unique id to identify a specific API call  | Use the transaction id being passed in the request/response structures.  |
-| recipient.id  | An unique id to identify a specific API call  | Use the transaction id being passed in the request/response structures.  |
-| producer  | An unique id to identify a specific API call  | Use the transaction id being passed in the request/response structures.  |
+| Attribute  | Description  |  What value to send? |
+|:----------|:-------------|:------|
+| spanId  | An unique id to identify a specific API transaction or Audit event  | Use the transaction id being passed in the request/response structures.  |
+| traceId  | An unique id to trace or track an entire end to end transaction or flow. For ex: Account discovery to linking flow  | [TBA]  |
+| sender.id  | An unique id to identify the originator of the API transaction | <ol> <li>If you are initiating the API call, add your entity id or uri here</li><li>If you are recieving the API call, add the caller entity id or uri here</li></ol>  |
+| recipient.id  | An unique id to identify the recipient of the API transaction  | <ol> <li>If you are initiating the API call, add the destination entity id or uri here</li><li>If you are recieving the API call, add your entity id or uri here</li></ol>  |
+| producer  | An unique id to identify the owner of the telemetry event  | Add your entity id or URI here.  |
+| producerType  | Type of network node  | <ol> <li>If you are an AA, add `AA`</li><li>If you are an FIP, add `FIP`</li><li>If you are an FIU, add `FIU`</li></ol>  |
+| observedTimeUnixNano  | Timestamp at which the event was observed  | <ol> <li>For API event add the timestamp when you have received the response back</li><li>For a METRIC event add the timestamp of when the metric event is generated</li><li>For the AUDIT event add the timestamp of when the event was observed</li></ol>  |
