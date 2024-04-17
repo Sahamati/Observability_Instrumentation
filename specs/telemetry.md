@@ -365,7 +365,7 @@ Following metric event (An AA vs non AA usage metric) contains an example comple
 
 ### AUDIT
 
-Audit events are used by participants to communicate about updates and state changes of entities within the network. The entities include domain objects like consent, as well as the participants themselves. 
+Audit events are used by participants to communicate about updates and state changes of entities within the network. The entities include domain objects like consent, as well as the participants themselves. In addition audit events can also be used to store all transaction logs.
 
 Following is the overall structure for Log events as per the open telemetry spec:
 
@@ -374,7 +374,7 @@ Following is the overall structure for Log events as per the open telemetry spec
   "logRecords": [{ // Required. One or more LOG events in detail
     "timeUnixNano": String, // Required. Time when the event occurred
     "observedTimeUnixNano": String, // Optional.Time when the event was observed if different from occurred
-    "severityNumber": String, // Required. Default to 12
+    "severityNumber": String, // Optional. Default to 12
     "traceId": String, // Optional. Correlate to any API event trace id
     "spanId": String, // Optional. Correlate to any API event span id
     "body": { // Required. Body of the log record as per OTEL protocol
