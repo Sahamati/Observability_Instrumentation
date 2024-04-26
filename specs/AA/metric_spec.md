@@ -1,7 +1,7 @@
 | Metric                                           | Mandatory or Optional | Definition | Why is it needed |
 |--------------------------------------------------|-----------------------|------------|------------------|
-| Login initiate percentage | Mandatory              |  Percentage: (No. of new to AA customers that initiated a login/No. of customers that were successfully redirected to the AA client)          |  To understand the integration between the FIU and AA                |
-| Percentage: (No. of customers that logged in successfully/No. of customers that initiated a login) | Optional              |            |                  |
+| Login initiate percentage | Mandatory              |  Percentage: (No. of exisitng to AA customers that initiated a login/No. of customers that were successfully redirected to the AA client)          |  To understand the integration between the FIU and AA                |
+| Login success Pecentage  | Mandatory              | Percentage: (No. of existing to AA customers that logged in successfully/No. of customers that initiated a login)           |                  |
 | Percentage: (No. of customers that chose to signup/No. of customers that were successfully redirected to AA client) | Optional              |            |                  |
 | Number of VUAs issued                           | Optional              |            |                  |
 | Percentage: (No. of customers who chose to discover their accounts)/No. of VUAs issued | Optional              |            |                  |
